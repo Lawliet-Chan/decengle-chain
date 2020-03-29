@@ -1,47 +1,174 @@
-[package]
-name = "decengle-chain"
-version = "0.1.0"
-authors = ["Lawliet-Chan <Lawliet-Chan@github.com>"]
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[[bin]]
-name = "decengle-chain"
-path = "src/main.rs"
-
-[dependencies]
-futures = "0.3.1"
-futures01 = { package = "futures", version = "0.1.29" }
-ctrlc = { version = "3.1.3", features = ["termination"] }
-log = "0.4.8"
-tokio = "0.1.22"
-parking_lot = "0.9.0"
-codec = { package = "parity-scale-codec", version = "1.0.0" }
-trie-root = "0.15.2"
-sp-io = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-cli = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sp-core = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-executor = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-service = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sp-inherents = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-transaction-pool = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sp-transaction-pool = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-network = { version = "0.8", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-consensus-aura = { version = "0.8", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sp-consensus-aura = { version = "0.8", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sp-consensus = { version = "0.8", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-grandpa = { version = "2.0.0-alpha.4", package = "sc-finality-grandpa", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-grandpa-primitives = { version = "2.0.0-alpha.4", package = "sp-finality-grandpa", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-client = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-node-template-runtime = { version = "2.0.0-alpha.4", path = "runtime" }
-sp-runtime = { version = "2.0.0-alpha.4", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-sc-basic-authority = {git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
-
-
 [workspace]
-members = []
+members = [
+	"bin/node-template/node",
+	"bin/node-template/runtime",
+	"bin/node-template/pallets/template",
+	"bin/node/cli",
+	"bin/node/executor",
+	"bin/node/primitives",
+	"bin/node/rpc-client",
+	"bin/node/rpc",
+	"bin/node/runtime",
+	"bin/node/testing",
+	"bin/node/transaction-factory",
+	"bin/utils/subkey",
+	"bin/utils/chain-spec-builder",
+	"client",
+	"client/api",
+	"client/authority-discovery",
+	"client/basic-authorship",
+	"client/block-builder",
+	"client/chain-spec",
+	"client/chain-spec/derive",
+	"client/cli",
+	"client/consensus/aura",
+	"client/consensus/babe",
+	"client/consensus/babe/rpc",
+	"client/consensus/manual-seal",
+	"client/consensus/pow",
+	"client/consensus/uncles",
+	"client/consensus/slots",
+	"client/consensus/epochs",
+	"client/db",
+	"client/executor",
+	"client/executor/common",
+	"client/executor/wasmi",
+	"client/executor/wasmtime",
+	"client/executor/runtime-test",
+	"client/finality-grandpa",
+	"client/informant",
+	"client/tracing",
+	"client/keystore",
+	"client/network",
+	"client/network/test",
+	"client/network-gossip",
+	"client/offchain",
+	"client/peerset",
+	"client/rpc-servers",
+	"client/rpc",
+	"client/rpc-api",
+	"client/service",
+	"client/service/test",
+	"client/state-db",
+	"client/telemetry",
+	"client/transaction-pool",
+	"client/transaction-pool/graph",
+	"utils/prometheus",
+	"utils/wasm-builder-runner",
+	"frame/assets",
+	"frame/aura",
+	"frame/authority-discovery",
+	"frame/authorship",
+	"frame/babe",
+	"frame/balances",
+	"frame/benchmarking",
+	"frame/benchmark",
+	"frame/collective",
+	"frame/contracts",
+	"frame/contracts/rpc",
+	"frame/contracts/rpc/runtime-api",
+	"frame/democracy",
+	"frame/elections-phragmen",
+	"frame/elections",
+	"frame/evm",
+	"frame/example",
+	"frame/example-offchain-worker",
+	"frame/executive",
+	"frame/finality-tracker",
+	"frame/generic-asset",
+	"frame/grandpa",
+	"frame/identity",
+	"frame/im-online",
+	"frame/indices",
+	"frame/membership",
+	"frame/metadata",
+	"frame/nicks",
+	"frame/offences",
+	"frame/randomness-collective-flip",
+	"frame/recovery",
+	"frame/scored-pool",
+	"frame/session",
+	"frame/session/benchmarking",
+	"frame/society",
+	"frame/staking",
+	"frame/staking/reward-curve",
+	"frame/sudo",
+	"frame/support",
+	"frame/support/procedural",
+	"frame/support/procedural/tools",
+	"frame/support/procedural/tools/derive",
+	"frame/support/test",
+	"frame/system",
+	"frame/system/rpc/runtime-api",
+	"frame/timestamp",
+	"frame/transaction-payment",
+	"frame/transaction-payment/rpc",
+	"frame/transaction-payment/rpc/runtime-api",
+	"frame/treasury",
+	"frame/utility",
+	"frame/vesting",
+	"primitives/allocator",
+	"primitives/application-crypto",
+	"primitives/application-crypto/test",
+	"primitives/authority-discovery",
+	"primitives/authorship",
+	"primitives/block-builder",
+	"primitives/blockchain",
+	"primitives/consensus/aura",
+	"primitives/consensus/babe",
+	"primitives/consensus/common",
+	"primitives/consensus/pow",
+	"primitives/consensus/vrf",
+	"primitives/core",
+	"primitives/debug-derive",
+	"primitives/storage",
+	"primitives/externalities",
+	"primitives/finality-tracker",
+	"primitives/finality-grandpa",
+	"primitives/inherents",
+	"primitives/keyring",
+	"primitives/offchain",
+	"primitives/panic-handler",
+	"primitives/phragmen",
+	"primitives/phragmen/compact",
+	"primitives/rpc",
+	"primitives/runtime-interface",
+	"primitives/runtime-interface/proc-macro",
+	"primitives/runtime-interface/test-wasm",
+	"primitives/runtime-interface/test-wasm-deprecated",
+	"primitives/runtime-interface/test",
+	"primitives/serializer",
+	"primitives/session",
+	"primitives/api",
+	"primitives/api/proc-macro",
+	"primitives/api/test",
+	"primitives/arithmetic",
+	"primitives/arithmetic/fuzzer",
+	"primitives/io",
+	"primitives/runtime",
+	"primitives/sandbox",
+	"primitives/staking",
+	"primitives/std",
+	"primitives/version",
+	"primitives/state-machine",
+	"primitives/timestamp",
+	"primitives/test-primitives",
+	"primitives/transaction-pool",
+	"primitives/trie",
+	"primitives/wasm-interface",
+	"test-utils/client",
+	"test-utils/runtime",
+	"test-utils/runtime/client",
+	"test-utils/runtime/transaction-pool",
+	"utils/browser",
+	"utils/build-script-utils",
+	"utils/fork-tree",
+	"utils/frame/benchmarking-cli",
+	"utils/frame/rpc/support",
+	"utils/frame/rpc/system",
+	"utils/wasm-builder",
+]
 
-[build-dependencies]
-vergen = "3.0.4"
-build-script-utils = { version = "2.0.0-alpha.4", package = "substrate-build-script-utils", git = "https://github.com/paritytech/substrate.git", rev = "653c89f6bb" }
+[profile.release]
+# Substrate runtime requires unwinding.
+panic = "unwind"
