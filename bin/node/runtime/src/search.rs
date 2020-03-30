@@ -1,24 +1,21 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate frame_system as system;
+extern crate pallet_timestamp as timestamp;
 
 use codec::{Decode, Encode};
 use frame_support::{
     decl_error, decl_event, decl_module, decl_storage,
     dispatch::DispatchResult,
     ensure,
-    weights::{
-        ClassifyDispatch, DispatchClass, DispatchInfo, PaysFee, SimpleDispatchInfo, WeighData,
-        Weight,
-    },
+    traits::Currency,
 };
 use keccak_hasher::KeccakHasher;
-use sp_core::ed25519::{Pair, Public, Signature};
+use sp_core::sr25519::{Pair, Public, Signature};
 use system::{ensure_signed};
 use core::u64;
 
 const REWARD_PER_HEAT: u128 = 1000;
-const ALICE: &'static str = "";
 
 pub type Tag = Vec<u8>;
 /// merkle-tree root hash
@@ -138,10 +135,10 @@ decl_module! {
             })?;
             SearchServices::<T>::try_mutate(&name, |ssi| {
                 Self::validate_signatures(signs, ssi.update_time)?;
-                *ssi.heat = signs_len;
+                *ssi.heat = signs_len as u64;
             })?;
             /// reward ssp
-            <balances::Module<T> as Currency<_>>::transfer(ALICE, ssp, REWARD_PER_HEAT * signs_len);
+            <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, signs_len as u128 * REWARD_PER_HEAT );
             Self::deposit_event(RawEvent::Timestamp(now));
             Ok(())
         }
