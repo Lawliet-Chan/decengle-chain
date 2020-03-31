@@ -12,6 +12,7 @@ use frame_support::{
 };
 use keccak_hasher::KeccakHasher;
 use sp_core::sr25519::{Pair, Public, Signature};
+use sp_std::vec::Vec;
 use system::{ensure_signed};
 use core::u64;
 
@@ -48,9 +49,9 @@ pub struct SearchServiceHash<AccountId, Moment> {
 decl_storage! {
     trait Store for Module<T: Trait> as Search {
         /// search service name -> search service info
-        SearchServices get(get_ss): map Vec<u8> => SearchServiceInfo<T::AccountId, T::Moment>;
+        SearchServices get(get_ss): map hasher(blake2_128_concat) Vec<u8> => SearchServiceInfo<T::AccountId, T::Moment>;
         /// search service name -> search service hash
-        SsHashes get(get_hash): map Vec<u8> => SearchServiceHash<T::AccountId, T::Moment>;
+        SsHashes get(get_hash): map hasher(blake2_128_concat) Vec<u8> => SearchServiceHash<T::AccountId, T::Moment>;
     }
 }
 
@@ -80,7 +81,7 @@ decl_error! {
         /// merkle-root hash is illegal
         RootHashIllegal,
         /// signature is illegal
-        SignatureIllegal(Vec<u8>),
+        SignatureIllegal,
         /// permission denied
         PermissionDenied,
         /// signature earlier than update_time
@@ -92,7 +93,7 @@ decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin{
         type Error = Error<T>;
 
-        fn deposit_event<T>() = default;
+        fn deposit_event() = default;
 
         fn register_search_service(origin, name: Vec<u8>, url: Vec<u8>, tags: Vec<Tag>) -> DispatchResult{
             let provider = ensure_signed(origin)?;
@@ -184,7 +185,7 @@ impl<T: Trait> Module<T> {
         while let Some(sg) = sign.next() {
             let sign_ts = Self::bytes_to_u64(sg.1.clone().as_ref());
             ensure!(sign_ts >= last_ts, Error::<T>::SignatureTooEarly);
-            ensure!(Pair::verify(&sg.0, sg.1.clone(), &sg.2), Error::<T>::SignatureIllegal(sg.1));
+            ensure!(Pair::verify(&sg.0, sg.1.clone(), &sg.2), Error::<T>::SignatureIllegal);
         }
     }
 
