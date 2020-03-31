@@ -14,7 +14,7 @@ repository = "https://github.com/paritytech/substrate/"
 codec = { package = "parity-scale-codec", version = "1.3.0", default-features = false, features = ["derive"] }
 integer-sqrt = { version = "0.1.2" }
 serde = { version = "1.0.102", optional = true }
-keccak-hasher = { version = "0.15.2", optional = true }
+keccak-hasher = { version = "0.15.2", default-features = false, optional = true }
 
 # primitives
 sp-authority-discovery = { version = "2.0.0-alpha.5", default-features = false, path = "../../../primitives/authority-discovery" }
@@ -131,7 +131,7 @@ std = [
 	"pallet-society/std",
 	"pallet-recovery/std",
 	"pallet-vesting/std",
-	"keccak-hasher",
+	"keccak-hasher/std",
 ]
 runtime-benchmarks = [
 	"frame-benchmarking",
