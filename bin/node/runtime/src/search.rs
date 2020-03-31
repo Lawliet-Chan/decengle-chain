@@ -81,7 +81,7 @@ decl_event! {
 }
 
 decl_error! {
-    pub enum SsError for Module<T: Trait> {
+    pub enum Error for Module<T: Trait> {
         /// when the count of tags more than 10, give an error
         TagsOverflow,
         /// service name exists
@@ -99,7 +99,7 @@ decl_error! {
 
 decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin{
-        type Error = SsError<T>;
+        type Error = Error<T>;
 
         fn deposit_event() = default;
 
