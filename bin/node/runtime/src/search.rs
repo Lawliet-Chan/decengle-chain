@@ -10,6 +10,10 @@ use frame_support::{
     dispatch::DispatchResult,
     ensure,
     traits::Currency,
+    weights::{
+        SimpleDispatchInfo, DispatchInfo, DispatchClass, ClassifyDispatch, WeighData, Weight,
+        PaysFee,
+    },
 };
 use keccak_hasher::KeccakHasher;
 use sp_core::sr25519::{Pair, Public, Signature};
@@ -28,7 +32,7 @@ pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
     type Currency: Currency<Self::AccountId>;
 }
 
-#[derive(Encode, Decode, Default, PartialEq)]
+#[derive(Encode, Decode, Default, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct SearchServiceInfo<AccountId, Moment> {
     provider: AccountId,
@@ -109,12 +113,12 @@ decl_module! {
                 tags,
                 register_time: now,
                 heat: 0,
-            }
+            };
             let ss_hash = SearchServiceHash{
                 provider,
                 root_hash: None,
                 update_time: now,
-            }
+            };
             SearchServices::<T>::insert(&name, &ss_info);
             SsHashes::<T>::insert(&name, &ss_hash);
             Ok(())
@@ -135,11 +139,13 @@ decl_module! {
                 ensure!(sh.provider == ssp, Error::<T>::PermissionDenied);
                 ensure!(sh.root_hash == last_root_hash, Error::<T>::RootHashIllegal);
                 *sh.root_hash = root_hash;
-                *sh.update_time = now;
+                *sh.update_time.set;
+                Ok(())
             })?;
             SearchServices::<T>::try_mutate(&name, |ssi| {
                 Self::validate_signatures(signs, ssi.update_time)?;
-                *ssi.heat = signs_len as u64;
+                ssi.heat = signs_len as u64;
+                Ok(())
             })?;
             /// reward ssp
             <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, signs_len as u128 * REWARD_PER_HEAT );
@@ -193,6 +199,7 @@ impl<T: Trait> Module<T> {
             ensure!(sign_ts >= last_ts, Error::<T>::SignatureTooEarly);
             ensure!(Pair::verify(&sg.0, sg.1.clone(), &sg.2), Error::<T>::SignatureIllegal);
         }
+        Ok(())
     }
 
     fn is_in_tags(targets: Vec<Tag>, range: Vec<Tag>) -> bool {
