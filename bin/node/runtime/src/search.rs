@@ -27,6 +27,7 @@ const REWARD_PER_HEAT: u128 = 1000;
 
 pub type Tag = Vec<u8>;
 /// merkle-tree root hash
+#[cfg(feature = "std")]
 pub type RootHash = KeccakHasher;
 
 pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
@@ -80,7 +81,7 @@ decl_event! {
 }
 
 decl_error! {
-    pub enum Error for Module<T: Trait> {
+    pub enum SsError for Module<T: Trait> {
         /// when the count of tags more than 10, give an error
         TagsOverflow,
         /// service name exists
@@ -98,7 +99,7 @@ decl_error! {
 
 decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin{
-        type Error = Error<T>;
+        type Error = SsError<T>;
 
         fn deposit_event() = default;
 
