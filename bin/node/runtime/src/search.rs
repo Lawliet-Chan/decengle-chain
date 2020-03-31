@@ -2,6 +2,7 @@
 
 extern crate frame_system as system;
 extern crate pallet_timestamp as timestamp;
+extern crate pallet_balances as balances;
 
 use codec::{Decode, Encode};
 use frame_support::{
@@ -95,6 +96,7 @@ decl_module! {
 
         fn deposit_event() = default;
 
+        #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn register_search_service(origin, name: Vec<u8>, url: Vec<u8>, tags: Vec<Tag>) -> DispatchResult{
             let provider = ensure_signed(origin)?;
             ensure!(!SearchServices::<T>::contains_key(name), Error::<T>::NameExists);
@@ -118,6 +120,7 @@ decl_module! {
             Ok(())
         }
 
+        #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
@@ -144,6 +147,7 @@ decl_module! {
             Ok(())
         }
 
+        #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn recommend_ss(origin) -> DispatchResult {
             let _ = ensure_signed(origin)?;
             let ss_vec = SearchServices::<T>::iter()
@@ -155,6 +159,7 @@ decl_module! {
             Ok(())
         }
 
+        #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn get_ss_by_tags(origin, tags: Vec<Tag>) -> DispatchResult {
             let _ = ensure_signed(origin)?;
             let mut ss_vec = Vec::new();
@@ -169,6 +174,7 @@ decl_module! {
             Ok(())
         }
 
+        #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn get_ss_by_name(origin, ss_name: Vec<u8>) -> DispatchResult {
             let _ = ensure_signed(origin)?;
             Self::deposit_event(RawEvent::GetSsInfoByName(Self::get_ss(ss_name)));
