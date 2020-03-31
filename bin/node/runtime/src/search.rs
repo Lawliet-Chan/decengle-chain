@@ -127,6 +127,7 @@ decl_module! {
         }
 
         #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
+        #[cfg(feature = "full_crypto")]
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
@@ -194,6 +195,7 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
+    #[cfg(feature = "full_crypto")]
     fn validate_signatures(signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>, ts: T::Moment) -> DispatchResult {
         let last_ts: u64 = ts.try_into()?;
         let mut sign = signs.iter();
