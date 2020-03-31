@@ -11,8 +11,7 @@ use frame_support::{
     ensure,
     traits::Currency,
     weights::{
-        SimpleDispatchInfo, DispatchInfo, DispatchClass, ClassifyDispatch, WeighData, Weight,
-        PaysFee,
+        SimpleDispatchInfo, Weight,
     },
 };
 use keccak_hasher::KeccakHasher;
@@ -138,12 +137,13 @@ decl_module! {
             SsHashes::<T>::try_mutate(&name, |sh| {
                 ensure!(sh.provider == ssp, Error::<T>::PermissionDenied);
                 ensure!(sh.root_hash == last_root_hash, Error::<T>::RootHashIllegal);
-                *sh.root_hash = root_hash;
-                *sh.update_time.set;
+                sh.root_hash = root_hash;
+                sh.update_time = now;
                 Ok(())
             })?;
+            let ss_hash = Self::get_hash(&name);
+            Self::validate_signatures(signs, ss_hash.update_time)?;
             SearchServices::<T>::try_mutate(&name, |ssi| {
-                Self::validate_signatures(signs, ssi.update_time)?;
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
