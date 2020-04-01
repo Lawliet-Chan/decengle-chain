@@ -20,14 +20,14 @@ use keccak_hasher::KeccakHasher;
 use sp_core::sr25519::{Pair, Public, Signature};
 
 use sp_std::vec::Vec;
-use system::{ensure_signed, Trait};
+use system::{ensure_signed};
 use core::u64;
+use pallet_session_benchmarking::Module;
 
 const REWARD_PER_HEAT: u128 = 1000;
 
 pub type Tag = Vec<u8>;
 /// merkle-tree root hash
-#[cfg(feature = "std")]
 pub type RootHash = KeccakHasher;
 
 pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
@@ -36,7 +36,6 @@ pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
 }
 
 #[derive(Encode, Decode, Default, PartialEq, Clone, Eq)]
-#[cfg_attr(feature = "std", derive(Debug))]
 pub struct SearchServiceInfo<AccountId, Moment> {
     provider: AccountId,
     name: Vec<u8>,
@@ -47,7 +46,6 @@ pub struct SearchServiceInfo<AccountId, Moment> {
 }
 
 #[derive(Encode, Decode, Default, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
 pub struct SearchServiceHash<AccountId, Moment> {
     provider: AccountId,
     root_hash: Option<RootHash>,
