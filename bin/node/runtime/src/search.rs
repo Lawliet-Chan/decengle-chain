@@ -22,7 +22,6 @@ use sp_core::sr25519::{Pair, Public, Signature};
 use sp_std::vec::Vec;
 use system::{ensure_signed};
 use core::u64;
-use pallet_session_benchmarking::Module;
 
 const REWARD_PER_HEAT: u128 = 1000;
 
