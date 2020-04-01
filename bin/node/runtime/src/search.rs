@@ -20,7 +20,7 @@ use keccak_hasher::KeccakHasher;
 use sp_core::sr25519::{Pair, Public, Signature};
 
 use sp_std::vec::Vec;
-use system::{ensure_signed};
+use system::{ensure_signed, Trait};
 use core::u64;
 
 const REWARD_PER_HEAT: u128 = 1000;
@@ -81,6 +81,7 @@ decl_event! {
 }
 
 decl_error! {
+    /// Error for the search module
     pub enum Error for Module<T: Trait> {
         /// when the count of tags more than 10, give an error
         TagsOverflow,
@@ -98,7 +99,7 @@ decl_error! {
 }
 
 decl_module! {
-    pub struct Module<T: Trait> for enum Call where origin: T::Origin{
+    pub struct Module<T: Trait> for enum Call where origin: T::Origin {
         type Error = Error<T>;
 
         fn deposit_event() = default;
