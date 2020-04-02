@@ -99,7 +99,7 @@ decl_module! {
         type Error = Error<T>;
 
         fn deposit_event() = default;
-        /*
+
         #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn register_search_service(origin, name: Vec<u8>, url: Vec<u8>, tags: Vec<Tag>) -> DispatchResult{
             let provider = ensure_signed(origin)?;
@@ -149,7 +149,6 @@ decl_module! {
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
-            /// reward ssp
             <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, signs_len as u128 * REWARD_PER_HEAT );
             Self::deposit_event(RawEvent::Timestamp(now));
             Ok(())
@@ -171,7 +170,7 @@ decl_module! {
         fn get_ss_by_tags(origin, tags: Vec<Tag>) -> DispatchResult {
             let _ = ensure_signed(origin)?;
             let mut ss_vec = Vec::new();
-            let mut it = SearchServices::<T>::iter();
+            let mut it = SearchServices::iter();
             while let Some(kv) = it.next() {
                 let ssi = kv.1;
                 if Self::is_in_tags(tags, ssi.tags) {
@@ -188,7 +187,7 @@ decl_module! {
             Self::deposit_event(RawEvent::GetSsInfoByName(Self::get_ss(ss_name)));
             Ok(())
         }
-        */
+
     }
 }
 
