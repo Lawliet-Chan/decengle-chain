@@ -12,6 +12,7 @@ use frame_support::{
     traits::Currency,
     weights::{SimpleDispatchInfo, Weight},
 };
+use frame_support::storage::IterableStorageMap;
 
 #[cfg(feature = "full_crypto")]
 use sp_core::sr25519::{Pair, Public, Signature};
@@ -127,7 +128,6 @@ decl_module! {
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
-            #[cfg(feature = "full_crypto")]
             signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
             root_hash: RootHash,
             last_root_hash: Option<RootHash>
@@ -191,8 +191,9 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
+    #[cfg(feature = "full_crypto")]
     fn validate_signatures(
-        #[cfg(feature = "full_crypto")] signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
+        signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
         ts: T::Moment,
     ) -> DispatchResult {
         let last_ts: u64 = ts.try_into()?;
