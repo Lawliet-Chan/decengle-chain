@@ -99,7 +99,7 @@ decl_module! {
         type Error = Error<T>;
 
         fn deposit_event() = default;
-
+        /*
         #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn register_search_service(origin, name: Vec<u8>, url: Vec<u8>, tags: Vec<Tag>) -> DispatchResult{
             let provider = ensure_signed(origin)?;
@@ -188,8 +188,8 @@ decl_module! {
             Self::deposit_event(RawEvent::GetSsInfoByName(Self::get_ss(ss_name)));
             Ok(())
         }
+        */
     }
-
 }
 
 impl<T: Trait> Module<T> {
