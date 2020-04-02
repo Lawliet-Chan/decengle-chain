@@ -33,7 +33,7 @@ pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
     type Currency: Currency<Self::AccountId>;
 }
 
-#[derive(Encode, Decode, Default, PartialEq, Clone, Eq)]
+#[derive(Encode, Decode, Default, PartialEq, Clone, Eq, Debug)]
 pub struct SearchServiceInfo<AccountId, Moment> {
     provider: AccountId,
     name: Vec<u8>,
@@ -43,7 +43,7 @@ pub struct SearchServiceInfo<AccountId, Moment> {
     heat: u64,
 }
 
-#[derive(Encode, Decode, Default, PartialEq)]
+#[derive(Encode, Decode, Default, PartialEq, Debug)]
 pub struct SearchServiceHash<AccountId, Moment> {
     provider: AccountId,
     root_hash: Option<RootHash>,
