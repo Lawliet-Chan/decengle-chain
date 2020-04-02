@@ -14,7 +14,6 @@ use frame_support::{
         SimpleDispatchInfo, Weight,
     },
 };
-use keccak_hasher::KeccakHasher;
 
 #[cfg(feature = "full_crypto")]
 use sp_core::sr25519::{Pair, Public, Signature};
@@ -27,7 +26,7 @@ const REWARD_PER_HEAT: u128 = 1000;
 
 pub type Tag = Vec<u8>;
 /// merkle-tree root hash
-pub type RootHash = KeccakHasher;
+pub type RootHash = Vec<u8>;
 
 pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;

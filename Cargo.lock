@@ -3596,7 +3596,6 @@ dependencies = [
  "frame-system",
  "frame-system-rpc-runtime-api",
  "integer-sqrt",
- "keccak-hasher",
  "node-primitives",
  "pallet-authority-discovery",
  "pallet-authorship",
