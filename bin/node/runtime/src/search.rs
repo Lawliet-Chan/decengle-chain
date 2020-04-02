@@ -1,8 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate frame_system as system;
-extern crate pallet_timestamp as timestamp;
 extern crate pallet_balances as balances;
+extern crate pallet_timestamp as timestamp;
 
 use codec::{Decode, Encode};
 use frame_support::{
@@ -10,17 +10,15 @@ use frame_support::{
     dispatch::DispatchResult,
     ensure,
     traits::Currency,
-    weights::{
-        SimpleDispatchInfo, Weight,
-    },
+    weights::{SimpleDispatchInfo, Weight},
 };
 
 #[cfg(feature = "full_crypto")]
 use sp_core::sr25519::{Pair, Public, Signature};
 
-use sp_std::vec::Vec;
-use system::{ensure_signed};
 use core::u64;
+use sp_std::vec::Vec;
+use system::ensure_signed;
 
 const REWARD_PER_HEAT: u128 = 1000;
 
@@ -28,7 +26,7 @@ pub type Tag = Vec<u8>;
 /// merkle-tree root hash
 pub type RootHash = Vec<u8>;
 
-pub trait Trait: system::Trait + timestamp::Trait + balances::Trait{
+pub trait Trait: system::Trait + timestamp::Trait + balances::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
     type Currency: Currency<Self::AccountId>;
 }
@@ -129,6 +127,7 @@ decl_module! {
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
+            #[cfg(feature = "full_crypto")]
             signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
             root_hash: RootHash,
             last_root_hash: Option<RootHash>
@@ -139,7 +138,7 @@ decl_module! {
             SsHashes::<T>::try_mutate(&name, |sh| {
                 ensure!(sh.provider == ssp, Error::<T>::PermissionDenied);
                 ensure!(sh.root_hash == last_root_hash, Error::<T>::RootHashIllegal);
-                sh.root_hash = root_hash;
+                sh.root_hash = Some(root_hash);
                 sh.update_time = now;
                 Ok(())
             })?;
@@ -192,14 +191,19 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
-    #[cfg(feature = "full_crypto")]
-    fn validate_signatures(signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>, ts: T::Moment) -> DispatchResult {
+    fn validate_signatures(
+        #[cfg(feature = "full_crypto")] signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
+        ts: T::Moment,
+    ) -> DispatchResult {
         let last_ts: u64 = ts.try_into()?;
         let mut sign = signs.iter();
         while let Some(sg) = sign.next() {
             let sign_ts = Self::bytes_to_u64(sg.1.clone().as_ref());
             ensure!(sign_ts >= last_ts, Error::<T>::SignatureTooEarly);
-            ensure!(Pair::verify(&sg.0, sg.1.clone(), &sg.2), Error::<T>::SignatureIllegal);
+            ensure!(
+                Pair::verify(&sg.0, sg.1.clone(), &sg.2),
+                Error::<T>::SignatureIllegal
+            );
         }
         Ok(())
     }
@@ -227,5 +231,4 @@ impl<T: Trait> Module<T> {
         u8_8.clone_from_slice(data);
         u64::from_be_bytes(u8_8)
     }
-
 }
