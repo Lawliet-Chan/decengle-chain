@@ -111,6 +111,10 @@ decl_error! {
         PermissionDenied,
         /// signature earlier than update_time
         SignatureTooEarly,
+        /// balance converts error
+        BalanceConvertErr,
+        /// timestamp converts error
+        TimestampConvertErr,
     }
 }
 
@@ -168,7 +172,7 @@ decl_module! {
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
-            let reward = <BalanceOf<T> as TryFrom<u128>>::try_from(signs_len as u128 * REWARD_PER_HEAT);
+            let reward = <BalanceOf<T> as TryFrom<u128>>::try_from(signs_len as u128 * REWARD_PER_HEAT).map_err(|_| Error::<T>::BalanceConvertErr)?;
             <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, reward);
             Self::deposit_event(RawEvent::Timestamp(now));
             Ok(())
@@ -216,7 +220,7 @@ impl<T: Trait> Module<T> {
         signs: Vec<(Sig, Msg)>,
         ts: T::Moment,
     ) -> DispatchResult {
-        let last_ts: u64 = <T::Moment as TryInto<u64>>::try_into(ts);
+        let last_ts: u64 = <T::Moment as TryInto<u64>>::try_into(ts).map_err(|_| Error::<T>::TimestampConvertErr)?;
         let mut sign = signs.iter();
         while let Some((sig, msg)) = sign.next() {
             let sign_ts = Self::bytes_to_u64(msg.0[0..8].as_ref());
