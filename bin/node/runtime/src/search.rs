@@ -26,6 +26,12 @@ pub type Tag = Vec<u8>;
 /// merkle-tree root hash
 pub type RootHash = Vec<u8>;
 
+#[derive(Encode, Decode, Clone, Debug)]
+pub struct Sig(pub [u8; 65]);
+
+#[derive(Encode, Decode, Clone, Debug)]
+pub struct Msg(pub [u8; 32]);
+
 pub trait Trait: system::Trait + timestamp::Trait + balances::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
     type Currency: Currency<Self::AccountId>;
@@ -126,7 +132,7 @@ decl_module! {
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
-            signs: Vec<([u8; 65], [u8; 32])>,
+            signs: Vec<(Sig, Msg)>,
             root_hash: RootHash,
             last_root_hash: Option<RootHash>
         ) -> DispatchResult {
@@ -190,16 +196,16 @@ decl_module! {
 
 impl<T: Trait> Module<T> {
     fn validate_signatures(
-        signs: Vec<([u8; 65], [u8; 32])>,
+        signs: Vec<(Sig, Msg)>,
         ts: T::Moment,
     ) -> DispatchResult {
         let last_ts: u64 = ts.try_into()?;
         let mut sign = signs.iter();
         while let Some((sig, msg)) = sign.next() {
-            let sign_ts = Self::bytes_to_u64(msg[0..8].as_ref());
+            let sign_ts = Self::bytes_to_u64(msg.0[0..8].as_ref());
             ensure!(sign_ts >= last_ts, Error::<T>::SignatureTooEarly);
             ensure!(
-                secp256k1_ecdsa_recover(sig, msg).ok(),
+                secp256k1_ecdsa_recover(&sig.0, &msg.0).is_ok(),
                 Error::<T>::SignatureIllegal
             );
         }
