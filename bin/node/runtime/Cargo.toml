@@ -79,6 +79,7 @@ sp-io = { version = "2.0.0-alpha.5", path = "../../../primitives/io" }
 [features]
 default = ["std"]
 std = [
+    "full_crypto",
 	"sp-authority-discovery/std",
 	"pallet-authority-discovery/std",
 	"pallet-authorship/std",
@@ -150,4 +151,15 @@ runtime-benchmarks = [
 	"pallet-society/runtime-benchmarks",
 	"pallet-im-online/runtime-benchmarks",
 	"pallet-democracy/runtime-benchmarks",
+]
+full_crypto = [
+	"ed25519-dalek",
+	"blake2-rfc",
+	"tiny-keccak",
+	"schnorrkel",
+	"hex",
+	"sha2",
+	"twox-hash",
+	"libsecp256k1",
+	"sp-runtime-interface/disable_target_static_assertions",
 ]
