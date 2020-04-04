@@ -93,6 +93,7 @@ default = ["std"]
 std = [
     "full_crypto",
 	"sp-authority-discovery/std",
+	"sp-runtime-interface/std",
 	"pallet-authority-discovery/std",
 	"pallet-authorship/std",
 	"sp-consensus-babe/std",
@@ -143,6 +144,14 @@ std = [
 	"pallet-society/std",
 	"pallet-recovery/std",
 	"pallet-vesting/std",
+	"ed25519-dalek/std",
+	"blake2-rfc/std",
+	"tiny-keccak",
+	"schnorrkel/std",
+	"hex/std",
+	"sha2/std",
+	"twox-hash/std",
+	"libsecp256k1/std",
 ]
 runtime-benchmarks = [
 	"frame-benchmarking",
