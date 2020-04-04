@@ -15,6 +15,7 @@ use frame_support::{
 use frame_support::storage::IterableStorageMap;
 
 use sp_io::crypto::secp256k1_ecdsa_recover;
+use sp_std::prelude::*;
 
 use core::u64;
 use sp_std::vec::Vec;
@@ -26,8 +27,20 @@ pub type Tag = Vec<u8>;
 /// merkle-tree root hash
 pub type RootHash = Vec<u8>;
 
-#[derive(Encode, Decode, Clone, Debug)]
+#[derive(Encode, Decode, Clone)]
 pub struct Sig(pub [u8; 65]);
+
+impl PartialEq for Sig {
+    fn eq(&self, other: &Self) -> bool {
+        &self.0[..] == &other.0[..]
+    }
+}
+
+impl sp_std::fmt::Debug for Sig {
+    fn fmt(&self, f: &mut sp_std::fmt::Formatter<'_>) -> sp_std::fmt::Result {
+        write!(f, "Signature({:?})", &self.0[..])
+    }
+}
 
 #[derive(Encode, Decode, Clone, Debug)]
 pub struct Msg(pub [u8; 32]);
