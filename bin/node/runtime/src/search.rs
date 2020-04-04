@@ -14,7 +14,7 @@ use frame_support::{
 };
 use frame_support::storage::IterableStorageMap;
 
-use sp_io::Crypto::secp256k1_ecdsa_recover;
+use sp_io::crypto::secp256k1_ecdsa_recover;
 
 use core::u64;
 use sp_std::vec::Vec;
