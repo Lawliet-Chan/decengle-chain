@@ -14,7 +14,7 @@ use frame_support::{
 };
 use frame_support::storage::IterableStorageMap;
 
-use sp_core::sr25519::Pair;
+use sp_io::Crypto::secp256k1_ecdsa_recover;
 
 use core::u64;
 use sp_std::vec::Vec;
@@ -126,7 +126,7 @@ decl_module! {
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
-            signs: Vec<(Vec<u8>, Vec<u8>, Vec<u8>)>,
+            signs: Vec<([u8; 65], [u8; 32])>,
             root_hash: RootHash,
             last_root_hash: Option<RootHash>
         ) -> DispatchResult {
@@ -190,16 +190,16 @@ decl_module! {
 
 impl<T: Trait> Module<T> {
     fn validate_signatures(
-        signs: Vec<(Vec<u8>, Vec<u8>, Vec<u8>)>,
+        signs: Vec<([u8; 65], [u8; 32])>,
         ts: T::Moment,
     ) -> DispatchResult {
         let last_ts: u64 = ts.try_into()?;
         let mut sign = signs.iter();
-        while let Some(sg) = sign.next() {
-            let sign_ts = Self::bytes_to_u64(sg.1.clone().as_ref());
+        while let Some((sig, msg)) = sign.next() {
+            let sign_ts = Self::bytes_to_u64(msg[0..8].as_ref());
             ensure!(sign_ts >= last_ts, Error::<T>::SignatureTooEarly);
             ensure!(
-                Pair::verify_weak(&sg.0, sg.1.clone(), &sg.2),
+                secp256k1_ecdsa_recover(sig, msg).ok(),
                 Error::<T>::SignatureIllegal
             );
         }
