@@ -16,6 +16,7 @@ use frame_support::storage::IterableStorageMap;
 
 use sp_io::crypto::secp256k1_ecdsa_recover;
 use sp_std::prelude::*;
+use sp_std::convert::{TryFrom, TryInto};
 
 use core::u64;
 use sp_std::vec::Vec;
@@ -49,6 +50,8 @@ pub trait Trait: system::Trait + timestamp::Trait + balances::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
     type Currency: Currency<Self::AccountId>;
 }
+
+pub type BalanceOf<T> = <<T as Trait>::Currency as Currency<<T as system::Trait>::AccountId>>::Balance;
 
 #[derive(Encode, Decode, Default, PartialEq, Clone, Eq, Debug)]
 pub struct SearchServiceInfo<AccountId, Moment> {
@@ -165,7 +168,8 @@ decl_module! {
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
-            <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, signs_len as u128 * REWARD_PER_HEAT );
+            let reward = <BalanceOf<T> as TryFrom<u128>>::try_from(signs_len as u128 * REWARD_PER_HEAT);
+            <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, reward);
             Self::deposit_event(RawEvent::Timestamp(now));
             Ok(())
         }
@@ -212,7 +216,7 @@ impl<T: Trait> Module<T> {
         signs: Vec<(Sig, Msg)>,
         ts: T::Moment,
     ) -> DispatchResult {
-        let last_ts: u64 = ts.try_into()?;
+        let last_ts: u64 = <T::Moment as TryInto<u64>>::try_into(ts);
         let mut sign = signs.iter();
         while let Some((sig, msg)) = sign.next() {
             let sign_ts = Self::bytes_to_u64(msg.0[0..8].as_ref());
