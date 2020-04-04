@@ -70,18 +70,6 @@ pallet-transaction-payment = { version = "2.0.0-alpha.5", default-features = fal
 pallet-transaction-payment-rpc-runtime-api = { version = "2.0.0-alpha.5", default-features = false, path = "../../../frame/transaction-payment/rpc/runtime-api/" }
 pallet-vesting = { version = "2.0.0-alpha.5", default-features = false, path = "../../../frame/vesting" }
 
-# full crypto
-ed25519-dalek = { version = "1.0.0-pre.3", default-features = false, features = ["u64_backend", "alloc"], optional = true }
-blake2-rfc = { version = "0.2.18", default-features = false, optional = true }
-tiny-keccak = { version = "2.0.1", features = ["keccak"], optional = true }
-schnorrkel = { version = "0.9.1", features = ["preaudit_deprecated", "u64_backend"], default-features = false, optional = true }
-sha2 = { version = "0.8.0", default-features = false, optional = true }
-hex = { version = "0.4", default-features = false, optional = true }
-twox-hash = { version = "1.5.0", default-features = false, optional = true }
-libsecp256k1 = { version = "0.3.2", default-features = false, features = ["hmac"], optional = true }
-
-sp-runtime-interface = { version = "2.0.0-alpha.5", default-features = false, path = "../../../primitives/runtime-interface" }
-
 [build-dependencies]
 wasm-builder-runner = { version = "1.0.5", package = "substrate-wasm-builder-runner", path = "../../../utils/wasm-builder-runner" }
 
@@ -91,9 +79,7 @@ sp-io = { version = "2.0.0-alpha.5", path = "../../../primitives/io" }
 [features]
 default = ["std"]
 std = [
-    "full_crypto",
 	"sp-authority-discovery/std",
-	"sp-runtime-interface/std",
 	"pallet-authority-discovery/std",
 	"pallet-authorship/std",
 	"sp-consensus-babe/std",
@@ -144,14 +130,6 @@ std = [
 	"pallet-society/std",
 	"pallet-recovery/std",
 	"pallet-vesting/std",
-	"ed25519-dalek/std",
-	"blake2-rfc/std",
-	"tiny-keccak",
-	"schnorrkel/std",
-	"hex/std",
-	"sha2/std",
-	"twox-hash/std",
-	"libsecp256k1/std",
 ]
 runtime-benchmarks = [
 	"frame-benchmarking",
@@ -172,15 +150,4 @@ runtime-benchmarks = [
 	"pallet-society/runtime-benchmarks",
 	"pallet-im-online/runtime-benchmarks",
 	"pallet-democracy/runtime-benchmarks",
-]
-full_crypto = [
-	"ed25519-dalek",
-	"blake2-rfc",
-	"tiny-keccak",
-	"schnorrkel",
-	"hex",
-	"sha2",
-	"twox-hash",
-	"libsecp256k1",
-	"sp-runtime-interface/disable_target_static_assertions",
 ]

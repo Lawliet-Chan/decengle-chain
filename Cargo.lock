@@ -3590,16 +3590,12 @@ dependencies = [
 name = "node-runtime"
 version = "2.0.0-alpha.5"
 dependencies = [
- "blake2-rfc",
- "ed25519-dalek",
  "frame-benchmarking",
  "frame-executive",
  "frame-support",
  "frame-system",
  "frame-system-rpc-runtime-api",
- "hex",
  "integer-sqrt",
- "libsecp256k1",
  "node-primitives",
  "pallet-authority-discovery",
  "pallet-authorship",
@@ -3633,9 +3629,7 @@ dependencies = [
  "pallet-utility",
  "pallet-vesting",
  "parity-scale-codec",
- "schnorrkel",
  "serde",
- "sha2",
  "sp-api",
  "sp-authority-discovery",
  "sp-block-builder",
@@ -3646,15 +3640,12 @@ dependencies = [
  "sp-keyring",
  "sp-offchain",
  "sp-runtime",
- "sp-runtime-interface",
  "sp-session",
  "sp-staking",
  "sp-std",
  "sp-transaction-pool",
  "sp-version",
  "substrate-wasm-builder-runner",
- "tiny-keccak 2.0.1",
- "twox-hash",
 ]
 
 [[package]]

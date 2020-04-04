@@ -14,8 +14,7 @@ use frame_support::{
 };
 use frame_support::storage::IterableStorageMap;
 
-#[cfg(feature = "full_crypto")]
-use sp_core::sr25519::{Pair, Public, Signature};
+use sp_core::sr25519::Pair;
 
 use core::u64;
 use sp_std::vec::Vec;
@@ -124,11 +123,10 @@ decl_module! {
         }
 
         #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
-        #[cfg(feature = "full_crypto")]
         fn upload_searched_info(
             origin,
             name: Vec<u8>,
-            signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
+            signs: Vec<(Vec<u8>, Vec<u8>, Vec<u8>)>,
             root_hash: RootHash,
             last_root_hash: Option<RootHash>
         ) -> DispatchResult {
@@ -191,9 +189,8 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
-    #[cfg(feature = "full_crypto")]
     fn validate_signatures(
-        signs: Vec<(Pair::Signature, Vec<u8>, Pair::Public)>,
+        signs: Vec<(Vec<u8>, Vec<u8>, Vec<u8>)>,
         ts: T::Moment,
     ) -> DispatchResult {
         let last_ts: u64 = ts.try_into()?;
@@ -202,7 +199,7 @@ impl<T: Trait> Module<T> {
             let sign_ts = Self::bytes_to_u64(sg.1.clone().as_ref());
             ensure!(sign_ts >= last_ts, Error::<T>::SignatureTooEarly);
             ensure!(
-                Pair::verify(&sg.0, sg.1.clone(), &sg.2),
+                Pair::verify_weak(&sg.0, sg.1.clone(), &sg.2),
                 Error::<T>::SignatureIllegal
             );
         }
