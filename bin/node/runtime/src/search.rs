@@ -51,8 +51,6 @@ pub trait Trait: system::Trait + timestamp::Trait + balances::Trait {
     type Currency: Currency<Self::AccountId>;
 }
 
-pub type BalanceOf<T> = <<T as Trait>::Currency as Currency<<T as system::Trait>::AccountId>>::Balance;
-
 #[derive(Encode, Decode, Default, PartialEq, Clone, Eq, Debug)]
 pub struct SearchServiceInfo<AccountId, Moment> {
     provider: AccountId,
@@ -172,7 +170,7 @@ decl_module! {
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
-            let reward = <BalanceOf<T> as TryFrom<u128>>::try_from(signs_len as u128 * REWARD_PER_HEAT).map_err(|_| Error::<T>::BalanceConvertErr)?;
+            let reward = <T::Balance as TryFrom<u128>>::try_from(signs_len as u128 * REWARD_PER_HEAT).map_err(|_| Error::<T>::BalanceConvertErr)?;
             <balances::Module<T> as Currency<_>>::deposit_creating(&ssp, reward);
             Self::deposit_event(RawEvent::Timestamp(now));
             Ok(())
