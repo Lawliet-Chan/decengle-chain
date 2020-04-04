@@ -70,6 +70,18 @@ pallet-transaction-payment = { version = "2.0.0-alpha.5", default-features = fal
 pallet-transaction-payment-rpc-runtime-api = { version = "2.0.0-alpha.5", default-features = false, path = "../../../frame/transaction-payment/rpc/runtime-api/" }
 pallet-vesting = { version = "2.0.0-alpha.5", default-features = false, path = "../../../frame/vesting" }
 
+# full crypto
+ed25519-dalek = { version = "1.0.0-pre.3", default-features = false, features = ["u64_backend", "alloc"], optional = true }
+blake2-rfc = { version = "0.2.18", default-features = false, optional = true }
+tiny-keccak = { version = "2.0.1", features = ["keccak"], optional = true }
+schnorrkel = { version = "0.9.1", features = ["preaudit_deprecated", "u64_backend"], default-features = false, optional = true }
+sha2 = { version = "0.8.0", default-features = false, optional = true }
+hex = { version = "0.4", default-features = false, optional = true }
+twox-hash = { version = "1.5.0", default-features = false, optional = true }
+libsecp256k1 = { version = "0.3.2", default-features = false, features = ["hmac"], optional = true }
+
+sp-runtime-interface = { version = "2.0.0-alpha.5", default-features = false, path = "../../../primitives/runtime-interface" }
+
 [build-dependencies]
 wasm-builder-runner = { version = "1.0.5", package = "substrate-wasm-builder-runner", path = "../../../utils/wasm-builder-runner" }
 
