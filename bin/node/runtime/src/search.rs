@@ -43,7 +43,7 @@ impl sp_std::fmt::Debug for Sig {
     }
 }
 
-#[derive(Encode, Decode, Clone, Debug)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct Msg(pub [u8; 32]);
 
 pub trait Trait: system::Trait + timestamp::Trait + balances::Trait {
@@ -158,8 +158,8 @@ decl_module! {
             let signs_len = signs.len();
             let now = <timestamp::Module<T>>::get();
             SsHashes::<T>::try_mutate(&name, |sh| {
-                ensure!(sh.provider == ssp, Error::<T>::PermissionDenied);
-                ensure!(sh.root_hash == last_root_hash, Error::<T>::RootHashIllegal);
+                ensure!(&sh.provider == &ssp, Error::<T>::PermissionDenied);
+                ensure!(&sh.root_hash == &last_root_hash, Error::<T>::RootHashIllegal);
                 sh.root_hash = Some(root_hash);
                 sh.update_time = now;
                 Ok(())
@@ -192,7 +192,7 @@ decl_module! {
         fn get_ss_by_tags(origin, tags: Vec<Tag>) -> DispatchResult {
             let _ = ensure_signed(origin)?;
             let mut ss_vec = Vec::new();
-            let mut it = SearchServices::iter();
+            let mut it = SearchServices::<T>::iter();
             while let Some(kv) = it.next() {
                 let ssi = kv.1;
                 if Self::is_in_tags(tags, ssi.tags) {
