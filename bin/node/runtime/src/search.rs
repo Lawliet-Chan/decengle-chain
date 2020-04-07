@@ -157,16 +157,16 @@ decl_module! {
             let ssp = ensure_signed(origin)?;
             let signs_len = signs.len();
             let now = <timestamp::Module<T>>::get();
-            SsHashes::<T>::try_mutate(&name, |sh| {
-                ensure!(&sh.provider == &ssp, Error::<T>::PermissionDenied);
-                ensure!(&sh.root_hash == &last_root_hash, Error::<T>::RootHashIllegal);
+            <SsHashes<T>>::try_mutate(&name, |sh| {
+                ensure!(sh.provider == ssp, Error::<T>::PermissionDenied);
+                ensure!(sh.root_hash == last_root_hash, Error::<T>::RootHashIllegal);
                 sh.root_hash = Some(root_hash);
                 sh.update_time = now;
                 Ok(())
             })?;
             let ss_hash = Self::get_hash(&name);
             Self::validate_signatures(signs, ss_hash.update_time)?;
-            SearchServices::<T>::try_mutate(&name, |ssi| {
+            <SearchServices<T>>::try_mutate(&name, |ssi| {
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
