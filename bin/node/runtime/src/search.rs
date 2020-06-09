@@ -125,12 +125,12 @@ decl_module! {
         #[weight = SimpleDispatchInfo::FixedNormal(10_000)]
         fn register_search_service(origin, name: Vec<u8>, url: Vec<u8>, tags: Vec<Tag>) -> DispatchResult{
             let provider = ensure_signed(origin)?;
-            ensure!(!SearchServices::<T>::contains_key(name), Error::<T>::NameExists);
+            ensure!(!SearchServices::<T>::contains_key(&name), Error::<T>::NameExists);
             ensure!(tags.len() <= 10, Error::<T>::TagsOverflow);
             let now = <timestamp::Module<T>>::get();
             let ss_info = SearchServiceInfo{
                 provider: provider.clone(),
-                name,
+                name: name.clone(),
                 url,
                 tags,
                 register_time: now,
@@ -157,7 +157,7 @@ decl_module! {
             let ssp = ensure_signed(origin)?;
             let signs_len = signs.len();
             let now = <timestamp::Module<T>>::get();
-            <SsHashes<T>>::try_mutate(&name, |sh| {
+            <SsHashes<T>>::try_mutate(&name, |sh| -> DispatchResult {
                 ensure!(sh.provider == ssp, Error::<T>::PermissionDenied);
                 ensure!(sh.root_hash == last_root_hash, Error::<T>::RootHashIllegal);
                 sh.root_hash = Some(root_hash);
@@ -166,7 +166,7 @@ decl_module! {
             })?;
             let ss_hash = Self::get_hash(&name);
             Self::validate_signatures(signs, ss_hash.update_time)?;
-            <SearchServices<T>>::try_mutate(&name, |ssi| {
+            <SearchServices<T>>::try_mutate(&name, |ssi| -> DispatchResult {
                 ssi.heat = signs_len as u64;
                 Ok(())
             })?;
@@ -195,7 +195,7 @@ decl_module! {
             let mut it = SearchServices::<T>::iter();
             while let Some(kv) = it.next() {
                 let ssi = kv.1;
-                if Self::is_in_tags(tags, ssi.tags) {
+                if Self::is_in_tags(tags.clone(), ssi.clone().tags) {
                     ss_vec.push(ssi);
                 }
             }
